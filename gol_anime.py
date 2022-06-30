@@ -72,5 +72,8 @@ A = Gol(initial_state=array_test, rules=standard_rule).run_game()
 sequence = np.stack([A[i] for i in A.keys()])
 
 
-fig = px.imshow(sequence, animation_frame=0, binary_string=True, labels=dict(animation_frame="slice"))
-fig.show()
+import plotly.express as px
+
+
+#fig = px.imshow(sequence, animation_frame=0, binary_string=True, labels=dict(animation_frame="slice"))
+#fig.show()
