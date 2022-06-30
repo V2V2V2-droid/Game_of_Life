@@ -66,7 +66,6 @@ class Gol:
 
 A = Gol(initial_state=array_test, rules=standard_rule).run_game()
 
-# make for t = 0 the df
 
 
 sequence = np.stack([A[i] for i in A.keys()])
