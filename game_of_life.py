@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 
-standard_rule = "B3S23"# for Birth = 3 neighbors and Stays alive : 2 or 3
+standard_rule = "B3S23"  # for Birth = 3 neighbors and Stays alive : 2 or 3
 
 
-N = 50
-array_test = grid = np.random.randint(2, size=(N*N)).reshape(N, N)
-
+N = 100
+array_test = np.random.randint(2, size=(N*N)).reshape(N, N)
+array2 = np.random.choice([0, 1], N*N, p=[0.1, 0.9]).reshape(N, N)
 
 def neigboors_alive(grid):
     # for an array return an array of the nb of living neighboors
@@ -34,11 +34,12 @@ def update_grid(neighbors, dead_to_alive=[3], staying_alive=[2, 3]):
 
 class Gol:
 
-
     def __init__(self,initial_state, rules, duration=10):
         assert isinstance(duration, int) and duration > 1, "duration must be an integer superior to one"
         assert isinstance(initial_state, np.ndarray), "format of the initial board should be a np array"
         self.initial_state = initial_state
+        self.long = self.initial_state.shape[0]
+        self.width = self.initial_state.shape[1]
         self.duration = duration
         self.rules = rules
         self.dead_to_alive, self.staying_alive = self.parsing_rules()
@@ -48,23 +49,19 @@ class Gol:
 
 
     def run_game(self):
-        life_journey = {}
+        life_journey = np.zeros(shape=(self.duration, self.long, self.width))
 
         for t in range(0, self.duration):
             if t == 0:
                 neighbor_grid = neigboors_alive(grid=self.initial_state)
             else:
                 neighbor_grid = neigboors_alive(grid=life_journey[t-1])
-            life_journey[t] = update_grid(neighbors=neighbor_grid, dead_to_alive=self.dead_to_alive,
-                                          staying_alive=self.staying_alive)
-        pd.DataFrame(life_journey[self.duration-1]).to_excel("final_grid.xlsx")
-
+            life_journey[t, :, :] = update_grid(neighbors=neighbor_grid, dead_to_alive=self.dead_to_alive,staying_alive=self.staying_alive)
         return life_journey
 
 
 if __name__ == "__main__":
-    A = Gol(initial_state=array_test, rules=standard_rule).run_game()
-    sequence = np.stack([A[i] for i in A.keys()])
-    fig = px.imshow(sequence, animation_frame=0, binary_string=True,
-                    labels=dict(animation_frame="time steps in the life journey"))
+    A = Gol(initial_state=array_test, rules=standard_rule, duration=50).run_game()
+    fig = px.imshow(A, animation_frame=0, binary_string=True,
+                                    labels=dict(animation_frame="time steps in the life journey"))
     fig.show()
