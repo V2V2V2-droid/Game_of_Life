@@ -1,13 +1,12 @@
 import numpy as np
 import pandas as pd
+import plotly.express as px
 
-standard_rule = "B3S23"
-# for Birth = 3 neighbors and Stays alive : 2 or 3
+standard_rule = "B3S23" # for Birth = 3 neighbors and Stays alive : 2 or 3
+
 
 N = 50
 array_test = grid = np.random.randint(2, size=(N*N)).reshape(N, N)
-
-pd.DataFrame(array_test).to_excel("gol_initial_array.xlsx")
 
 def neigboors_alive(grid):
     # for an array return an array of the nb of living neighboors
@@ -22,7 +21,6 @@ def neigboors_alive(grid):
         count_array[i,j] = int(sum([grid[c] for c in mesh]) - grid[i,j])
     return count_array
 
-#A = neigboors_alive(grid=array_test)
 
 def update_grid(neighbors, dead_to_alive=[3], staying_alive=[2, 3]):
 
@@ -31,10 +29,8 @@ def update_grid(neighbors, dead_to_alive=[3], staying_alive=[2, 3]):
     # apply on the count of neighbors
     living = np.vectorize(lambda x: living_rules[x])
     # update grid
-    pd.DataFrame(living(neighbors)).to_excel("new_grid.xlsx")
     return living(neighbors)
 
-#update_grid(grid=array_test, neighbors=A)
 
 
 class Gol:
@@ -52,6 +48,7 @@ class Gol:
 
 
     def run_game(self):
+
         life_journey = {}
         for t in range(0, self.duration):
             if t == 0:
@@ -66,25 +63,8 @@ class Gol:
 
 A = Gol(initial_state=array_test, rules=standard_rule).run_game()
 
-# make for t = 0 the df
-B = A[0]
-# B is a np array
+sequence = np.stack([A[i] for i in A.keys()])
 
 
-import plotly.express as px
-
-
-# questions: iterate only once or not ?
-# cause the animation will take care of the iteration
-
-# then the automate class should take a grid and update it
-# here it takes a grid and makes all the sequence of the life of the automation cell
-
-#fig = px.imshow(B)
-#fig.show()
-
-from skimage import io
-data = io.imread("https://github.com/scikit-image/skimage-tutorials/raw/main/images/cells.tif")
-img = data[25:40]
-fig = px.imshow(img, animation_frame=0, binary_string=True, labels=dict(animation_frame="slice"))
+fig = px.imshow(sequence, animation_frame=0, binary_string=True, labels=dict(animation_frame="slice"))
 fig.show()
