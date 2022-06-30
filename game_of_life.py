@@ -20,7 +20,6 @@ def neigboors_alive(grid):
         mesh = [(k[0],k[1]) for k in mesh if k[0]>=0 and k[1]>=0 and k[0]<N and k[1]<N]
         # sum and remove value for the central cell
         count_array[i,j] = int(sum([grid[c] for c in mesh]) - grid[i,j])
-    #pd.DataFrame(count_array).to_excel("countarray.xlsx")
     return count_array
 
 #A = neigboors_alive(grid=array_test)
