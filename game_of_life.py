@@ -56,8 +56,6 @@ class Gol:
         for t in range(0, self.duration):
             if t == 0:
                 life_journey[t, :, :] = self.initial_state
-                #neighbor_grid = neigboors_alive(grid=self.initial_state)
-                neighbor_grid = neigboors_alive(grid=self.initial_state)
             else:
                 neighbor_grid = neigboors_alive(grid=life_journey[t-1])
                 life_journey[t, :, :] = update_grid(neighbors=neighbor_grid,
